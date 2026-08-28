@@ -9,6 +9,9 @@ const FORMSPREE_ID   = "xnpqqjkd";
 const COUNTAPI_BASE = "https://countapi.mileshilliard.com/api/v1";
 
 // ---- real view counter ----
+// Shows a quiet pulsing dot while the request is in flight, then fades
+// straight to the real number — no count-up animation, so there's nothing
+// to look choppy regardless of connection speed.
 (async function trackView(){
   const el = document.getElementById('viewCount');
   if(COUNTAPI_KEY.startsWith("REPLACE")){
@@ -18,23 +21,12 @@ const COUNTAPI_BASE = "https://countapi.mileshilliard.com/api/v1";
   try{
     const res = await fetch(`${COUNTAPI_BASE}/hit/${COUNTAPI_KEY}`);
     const data = await res.json();
-    animateCount(el, data.value);
+    el.textContent = data.value.toLocaleString('en-US');
+    el.classList.add('loaded');
   }catch(err){
     el.textContent = "–";
   }
 })();
-
-function animateCount(el, target){
-  const duration = 900;
-  const start = performance.now();
-  function tick(now){
-    const p = Math.min(1, (now - start) / duration);
-    const eased = 1 - Math.pow(1 - p, 3);
-    el.textContent = Math.floor(eased * target).toLocaleString('en-US');
-    if(p < 1) requestAnimationFrame(tick);
-  }
-  requestAnimationFrame(tick);
-}
 
 // ---- reveal paragraphs on scroll ----
 const paras = document.querySelectorAll('.letter p');
