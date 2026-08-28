@@ -1,0 +1,319 @@
+:root{
+  --bg:            #120f0b;
+  --paper:         #1b160f;
+  --paper-edge:    #241d13;
+  --ink:           #e7ddc9;
+  --ink-dim:       #9c9280;
+  --ember:         #dfa257;
+  --ember-soft:    rgba(223,162,87,0.30);
+  --rose-ash:      #c68877;
+  --line:          #3a3122;
+  --focus:         #e8c48a;
+  --error:         #c97a6d;
+}
+
+*{ box-sizing:border-box; margin:0; padding:0; }
+
+html{ scroll-behavior:smooth; }
+
+body{
+  background:
+    radial-gradient(ellipse 900px 600px at 50% -10%, rgba(223,162,87,0.09), transparent 60%),
+    var(--bg);
+  color: var(--ink);
+  font-family:'Literata', serif;
+  font-weight:300;
+  line-height:1.85;
+  min-height:100vh;
+  padding: 8vh 20px 12vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  overflow-x:hidden;
+  position:relative;
+}
+
+/* subtle paper grain over everything, ties the "letter" feel together */
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  opacity:0.05;
+  mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  z-index:5;
+}
+
+/* ---------- ambient candlelight + dust ---------- */
+.ambient{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+}
+
+.glow{
+  position:absolute;
+  top:6%;
+  left:50%;
+  width:640px;
+  height:640px;
+  transform:translateX(-50%);
+  background: radial-gradient(circle, var(--ember-soft) 0%, transparent 70%);
+  filter: blur(10px);
+  animation: flicker 7s ease-in-out infinite;
+}
+
+@keyframes flicker{
+  0%,100%{ opacity:0.7; transform:translateX(-50%) scale(1); }
+  35%{     opacity:0.5; transform:translateX(-50%) scale(0.97); }
+  50%{     opacity:0.85;  transform:translateX(-48%) scale(1.03); }
+  72%{     opacity:0.55;  transform:translateX(-51%) scale(0.99); }
+}
+
+.mote{
+  position:absolute;
+  width:3px;
+  height:3px;
+  border-radius:50%;
+  background: var(--ember);
+  opacity:0;
+  animation: drift 14s linear infinite;
+}
+@keyframes drift{
+  0%   { opacity:0; transform:translateY(0) translateX(0); }
+  10%  { opacity:.5; }
+  90%  { opacity:.3; }
+  100% { opacity:0; transform:translateY(-380px) translateX(40px); }
+}
+
+/* ---------- header meta ---------- */
+.meta-bar{
+  width:100%;
+  max-width:620px;
+  display:flex;
+  justify-content:flex-end;
+  align-items:center;
+  margin-bottom:26px;
+  padding:0 4px;
+  font-family:'IBM Plex Mono', monospace;
+  font-size:0.72rem;
+  letter-spacing:0.05em;
+  color: var(--ink-dim);
+  position:relative;
+  z-index:1;
+}
+
+.views{
+  display:flex;
+  align-items:center;
+  gap:7px;
+}
+.views .eye{ font-size:0.95rem; filter: grayscale(0.2) sepia(0.3); }
+.views .count{ color: var(--ember); font-weight:500; }
+.views-label{ text-transform:uppercase; letter-spacing:0.08em; font-size:0.65rem; }
+
+/* ---------- letter card ---------- */
+.letter{
+  position:relative;
+  z-index:1;
+  width:100%;
+  max-width:620px;
+  background: linear-gradient(180deg, var(--paper), var(--paper-edge));
+  border:1px solid var(--line);
+  border-radius:3px;
+  padding:56px 44px 48px;
+  box-shadow:
+    0 30px 60px -20px rgba(0,0,0,0.65),
+    0 0 0 1px rgba(0,0,0,0.2) inset;
+  animation: rise 1.1s cubic-bezier(.2,.7,.3,1) both;
+}
+
+@keyframes rise{
+  from{ opacity:0; transform:translateY(22px); }
+  to{   opacity:1; transform:translateY(0); }
+}
+
+.date-line{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:0.72rem;
+  color: var(--ink-dim);
+  letter-spacing:0.04em;
+  margin-bottom:34px;
+}
+
+h1{
+  font-family:'Special Elite', cursive;
+  font-weight:normal;
+  font-size: clamp(1.5rem, 4vw, 2.05rem);
+  line-height:1.5;
+  color: var(--ember);
+  text-shadow: 0 0 22px rgba(223,162,87,0.16);
+  margin-bottom:34px;
+  letter-spacing:0.01em;
+}
+
+.intro{
+  font-style:italic;
+  color: var(--ink-dim);
+  font-size:1.02rem;
+  margin-bottom:34px;
+  padding-bottom:34px;
+  border-bottom:1px solid var(--line);
+}
+
+p{
+  font-size:1.06rem;
+  margin-bottom:26px;
+  opacity:0;
+  transform: translateY(10px);
+  transition: opacity .8s ease, transform .8s ease;
+}
+p.in-view{ opacity:1; transform:translateY(0); }
+
+.highlight{
+  color: var(--ember);
+  border-bottom:1px dotted var(--rose-ash);
+  padding-bottom:1px;
+}
+
+.close-mark{
+  margin-top:40px;
+  text-align:center;
+  color: var(--line);
+  letter-spacing:0.5em;
+  font-family:'IBM Plex Mono', monospace;
+  font-size:0.9rem;
+}
+
+/* ---------- divider between letter and comments ---------- */
+.divider{
+  width:100%;
+  max-width:620px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin:56px 0 34px;
+  color: var(--ink-dim);
+  font-family:'IBM Plex Mono', monospace;
+  font-size:0.7rem;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  position:relative;
+  z-index:1;
+}
+.divider::before, .divider::after{
+  content:"";
+  flex:1;
+  height:1px;
+  background: var(--line);
+}
+
+/* ---------- comments / private message ---------- */
+.comments{
+  width:100%;
+  max-width:620px;
+  position:relative;
+  z-index:1;
+}
+
+.comments h2{
+  font-family:'Special Elite', cursive;
+  font-weight:normal;
+  font-size:1.1rem;
+  color: var(--ink);
+  margin-bottom:6px;
+}
+
+.comments .sub{
+  font-size:0.9rem;
+  color: var(--ink-dim);
+  margin-bottom:22px;
+}
+
+.comment-form{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  background: var(--paper);
+  border:1px solid var(--line);
+  border-radius:3px;
+  padding:18px;
+}
+
+.comment-form input[type="text"],
+.comment-form textarea{
+  width:100%;
+  background: transparent;
+  border:none;
+  border-bottom:1px solid var(--line);
+  color: var(--ink);
+  font-family:'Literata', serif;
+  font-size:0.98rem;
+  padding:8px 2px;
+  resize:none;
+}
+.comment-form input[type="text"]{ max-width:260px; }
+
+.comment-form input::placeholder,
+.comment-form textarea::placeholder{ color: var(--ink-dim); }
+
+.comment-form input:focus,
+.comment-form textarea:focus{
+  outline:none;
+  border-bottom-color: var(--focus);
+}
+.comment-form input:focus-visible,
+.comment-form textarea:focus-visible,
+button:focus-visible{
+  outline: 2px solid var(--focus);
+  outline-offset:2px;
+}
+
+.form-row{
+  display:flex;
+  justify-content:flex-end;
+  align-items:center;
+  gap:14px;
+}
+
+.form-status{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:0.72rem;
+  color: var(--ink-dim);
+  margin-right:auto;
+  min-height:1em;
+}
+.form-status.error{ color: var(--error); }
+.form-status.ok{ color: var(--ember); }
+
+button.leave-msg{
+  background: transparent;
+  border:1px solid var(--ember);
+  color: var(--ember);
+  font-family:'IBM Plex Mono', monospace;
+  font-size:0.78rem;
+  letter-spacing:0.05em;
+  padding:10px 18px;
+  border-radius:2px;
+  cursor:pointer;
+  transition: background .25s ease, color .25s ease, opacity .25s ease;
+}
+button.leave-msg:hover{
+  background: var(--ember);
+  color: #171207;
+}
+button.leave-msg:disabled{
+  opacity:0.5;
+  cursor:default;
+}
+
+@media (max-width:600px){
+  .letter{ padding:40px 24px 36px; }
+  .comment-form input[type="text"]{ max-width:100%; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; }
+}

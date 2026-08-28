@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>I'll be gone for a while...</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Literata:ital,opsz,wght@0,18..144,300;0,18..144,400;0,18..144,500;1,18..144,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="ambient">
+    <div class="glow"></div>
+  </div>
+
+  <div class="meta-bar">
+    <div class="views"><span class="eye">👁️</span><span class="count" id="viewCount">–</span><span class="views-label">views</span></div>
+  </div>
+
+  <main class="letter">
+    <div class="date-line">Somewhere between back then and right now.</div>
+
+    <h1>I'll be gone for a while...</h1>
+
+    <p class="intro">Hey, it's me :) In case you found this page and you're wondering why I'm gone, where I might be for a while, or you just want to know a bit more about my life and who I actually am deep inside — take your time, this is for you.</p>
+
+    <p>I don't know how long I'll be gone, but please don't hold back on texting me anyway :) It means a lot to me. I want to step away from Discord, Twitch, and social contact online for a while. It just hasn't been good for me lately, and I need this distance to clear my head and focus on my real life.</p>
+
+    <p>I've been feeling quite <span class="highlight">alone</span> lately, even though I know I'm not completely alone. My mom and my family stand behind me, and saying I have no one wouldn't be fair to them, or to anyone who's been there for me. If you're reading this and you've supported me: you have a place in my heart. Always. You're a part of me, and I appreciate it from the bottom of my heart, more than I can really put into words. Thank you to all of you &lt;3 Love y'all, and please take care.</p>
+
+    <p>I also want to talk about moving forward. Dwelling too much on the past isn't good — you need a clear view ahead, no matter how much it hurts or how many scars you carry. Despite everything I've been through, all the bad experiences and the traumas I still carry, I won't give up. I'll keep trying my best, no matter how much it hurts, and even if I cry at some point because of the pain inside me, I'll try to hold onto my smile and stay the good-hearted person I truly am.</p>
+
+    <p>I may still go through hard times, but I'll try not to <span class="highlight">regret</span> the decisions I make. Just remember this: I won't forget you. There will always be a part of me where all of you have a safe place to stay.</p>
+
+    <div class="close-mark">· · ·</div>
+  </main>
+
+  <div class="divider">Leave something for me</div>
+
+  <section class="comments">
+    <h2>Send me a message</h2>
+    <div class="sub">This goes straight to me, privately. Nobody else will see it — you don't need the right words, just write something.</div>
+
+    <form class="comment-form" id="commentForm">
+      <input type="text" id="commentName" name="name" placeholder="Your name (optional)" maxlength="40" autocomplete="off">
+      <textarea id="commentMsg" name="message" rows="4" placeholder="Write something..." maxlength="600" required></textarea>
+      <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off">
+      <div class="form-row">
+        <span class="form-status" id="formStatus" role="status" aria-live="polite"></span>
+        <button type="submit" class="leave-msg" id="submitBtn">Send privately</button>
+      </div>
+    </form>
+  </section>
+
+<script src="script.js"></script>
+</body>
+</html>
