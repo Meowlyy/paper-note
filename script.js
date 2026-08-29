@@ -27,7 +27,7 @@ const COUNTAPI_BASE = "https://countapi.mileshilliard.com/api/v1";
 
 // ---- drifting dust motes ----
 const ambient = document.querySelector('.ambient');
-for(let i=0;i<14;i++){
+for(let i=0;i<7;i++){
   const m = document.createElement('div');
   m.className = 'mote';
   m.style.left = (20 + Math.random()*60) + '%';
