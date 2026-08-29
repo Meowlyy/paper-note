@@ -27,7 +27,7 @@ body{
   font-weight:300;
   line-height:1.85;
   min-height:100vh;
-  padding: 8vh 20px 12vh;
+  padding: 8vh 20px 10vh;
   display:flex;
   flex-direction:column;
   align-items:center;
@@ -35,7 +35,6 @@ body{
   position:relative;
 }
 
-/* subtle paper grain over everything, ties the "letter" feel together */
 body::after{
   content:"";
   position:fixed;
@@ -90,7 +89,110 @@ body::after{
   100% { opacity:0; transform:translateY(-380px) translateX(40px); }
 }
 
-/* ---------- views, tucked into the letter's corner ---------- */
+/* ---------- stage: side art + book side by side ---------- */
+.stage{
+  position:relative;
+  z-index:1;
+  width:100%;
+  max-width:860px;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  gap:26px;
+}
+
+/* ---------- companion art, to the right of the letter ---------- */
+.side-art{
+  position:relative;
+  width:150px;
+  flex-shrink:0;
+  margin-top:70px;
+  display:grid;
+}
+.side-char{
+  grid-area: 1 / 1;
+  text-align:center;
+  opacity:0;
+  transform:translateY(10px);
+  transition: opacity .45s ease, transform .45s ease;
+  pointer-events:none;
+}
+.side-char.active{
+  opacity:1;
+  transform:translateY(0);
+}
+.side-art.empty{ opacity:0; }
+.side-art{ transition: opacity .4s ease; }
+.side-char img{
+  max-width:140px;
+  display:block;
+  margin:0 auto;
+  filter: drop-shadow(0 14px 20px rgba(0,0,0,0.45));
+}
+.side-char .speech-bubble{
+  position:relative;
+  margin-bottom:14px;
+}
+.side-char .speech-bubble::after{
+  content:"";
+  position:absolute;
+  bottom:-7px;
+  left:50%;
+  transform:translateX(-50%);
+  border-width:7px 7px 0 7px;
+  border-style:solid;
+  border-color: var(--line) transparent transparent transparent;
+}
+
+@media (max-width:900px){
+  .side-art{ display:none; }
+}
+
+/* ---------- the book (card that holds all chapters) ---------- */
+.book{
+  position:relative;
+  z-index:1;
+  width:100%;
+  max-width:620px;
+  background: linear-gradient(180deg, var(--paper), var(--paper-edge));
+  border:1px solid var(--line);
+  border-radius:3px;
+  padding:26px 44px 34px;
+  box-shadow:
+    0 30px 60px -20px rgba(0,0,0,0.65),
+    0 0 0 1px rgba(0,0,0,0.2) inset;
+  animation: rise 1.1s cubic-bezier(.2,.7,.3,1) both;
+}
+
+@keyframes rise{
+  from{ opacity:0; transform:translateY(22px); }
+  to{   opacity:1; transform:translateY(0); }
+}
+
+/* ---------- chapter progress dots ---------- */
+.progress{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  margin-bottom:30px;
+}
+.progress .dot{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  border:none;
+  padding:0;
+  background: var(--line);
+  cursor:pointer;
+  transition: background .3s ease, transform .3s ease;
+}
+.progress .dot:hover{ background: var(--ink-dim); }
+.progress .dot.current{
+  background: var(--ember);
+  transform: scale(1.35);
+}
+
+/* ---------- views, tucked into chapter one's corner ---------- */
 .views{
   position:absolute;
   top:22px;
@@ -103,7 +205,10 @@ body::after{
   color: var(--ink-dim);
   opacity:0;
   animation: views-in 0.6s ease 0.4s forwards;
+  transition: opacity .3s ease;
+  z-index:2;
 }
+.views.hidden{ opacity:0 !important; pointer-events:none; }
 @keyframes views-in{ to{ opacity:1; } }
 
 .views .eye{ font-size:0.85rem; opacity:0.7; }
@@ -114,7 +219,7 @@ body::after{
   min-width: 1.4em;
   text-align:right;
 }
-.views .dot{
+.views .dot-load{
   display:inline-block;
   width:3px; height:3px;
   border-radius:50%;
@@ -123,8 +228,8 @@ body::after{
   opacity:0.5;
   animation: dot-pulse 1.2s ease-in-out infinite;
 }
-.views .dot:nth-child(2){ animation-delay:0.15s; }
-.views .dot:nth-child(3){ animation-delay:0.3s; }
+.views .dot-load:nth-child(2){ animation-delay:0.15s; }
+.views .dot-load:nth-child(3){ animation-delay:0.3s; }
 @keyframes dot-pulse{
   0%,100%{ opacity:0.25; transform: translateY(0); }
   50%{ opacity:0.8; transform: translateY(-1px); }
@@ -132,47 +237,48 @@ body::after{
 .views .count.loaded{ animation: count-fade 0.4s ease; }
 @keyframes count-fade{ from{ opacity:0; } to{ opacity:1; } }
 
-@media (max-width:600px){
-  .views{ top:16px; right:18px; }
+/* ---------- chapters: each sized to its own content, height
+   animates smoothly between them so nothing jumps or scrolls ---------- */
+.chapters-stage{
+  position:relative;
+  overflow:hidden;
+  transition: height .4s ease;
 }
-
-/* ---------- letter card ---------- */
-.letter{
+.chapter{
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  opacity:0;
+  transform:translateY(8px);
+  transition: opacity .4s ease, transform .4s ease;
+  pointer-events:none;
+}
+.chapter.active{
+  opacity:1;
+  transform:translateY(0);
+  pointer-events:auto;
   position:relative;
   z-index:1;
-  width:100%;
-  max-width:620px;
-  background: linear-gradient(180deg, var(--paper), var(--paper-edge));
-  border:1px solid var(--line);
-  border-radius:3px;
-  padding:56px 44px 48px;
-  box-shadow:
-    0 30px 60px -20px rgba(0,0,0,0.65),
-    0 0 0 1px rgba(0,0,0,0.2) inset;
-  animation: rise 1.1s cubic-bezier(.2,.7,.3,1) both;
 }
 
-@keyframes rise{
-  from{ opacity:0; transform:translateY(22px); }
-  to{   opacity:1; transform:translateY(0); }
-}
-
-.date-line{
+.eyebrow{
   font-family:'IBM Plex Mono', monospace;
-  font-size:0.72rem;
+  font-size:0.7rem;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
   color: var(--ink-dim);
-  letter-spacing:0.04em;
-  margin-bottom:34px;
+  margin-bottom:20px;
 }
 
 h1{
   font-family:'Special Elite', cursive;
   font-weight:normal;
-  font-size: clamp(1.5rem, 4vw, 2.05rem);
+  font-size: clamp(1.4rem, 4vw, 1.9rem);
   line-height:1.5;
   color: var(--ember);
-  text-shadow: 0 0 22px rgba(223,162,87,0.16);
-  margin-bottom:34px;
+  text-shadow: 0 0 22px rgba(217,160,95,0.14);
+  margin-bottom:30px;
   letter-spacing:0.01em;
 }
 
@@ -180,19 +286,28 @@ h1{
   font-style:italic;
   color: var(--ink-dim);
   font-size:1.02rem;
-  margin-bottom:34px;
-  padding-bottom:34px;
+  margin-bottom:30px;
+  padding-bottom:30px;
   border-bottom:1px solid var(--line);
 }
 
 p{
   font-size:1.06rem;
-  margin-bottom:26px;
-  opacity:0;
-  transform: translateY(10px);
-  transition: opacity .8s ease, transform .8s ease;
+  margin-bottom:24px;
 }
-p.in-view{ opacity:1; transform:translateY(0); }
+
+.chapter.active p{
+  animation: p-in .6s ease both;
+}
+.chapter.active p:nth-of-type(1){ animation-delay: .05s; }
+.chapter.active p:nth-of-type(2){ animation-delay: .15s; }
+.chapter.active p:nth-of-type(3){ animation-delay: .25s; }
+.chapter.active p:nth-of-type(4){ animation-delay: .35s; }
+
+@keyframes p-in{
+  from{ opacity:0; transform:translateY(8px); }
+  to{   opacity:1; transform:translateY(0); }
+}
 
 .highlight{
   color: var(--ember);
@@ -201,7 +316,7 @@ p.in-view{ opacity:1; transform:translateY(0); }
 }
 
 .close-mark{
-  margin-top:40px;
+  margin-top:36px;
   text-align:center;
   color: var(--line);
   letter-spacing:0.5em;
@@ -209,21 +324,18 @@ p.in-view{ opacity:1; transform:translateY(0); }
   font-size:0.9rem;
 }
 
-/* ---------- divider between letter and comments ---------- */
+/* ---------- divider before comments ---------- */
 .divider{
   width:100%;
-  max-width:620px;
   display:flex;
   align-items:center;
   gap:14px;
-  margin:56px 0 34px;
+  margin:40px 0 26px;
   color: var(--ink-dim);
   font-family:'IBM Plex Mono', monospace;
   font-size:0.7rem;
   letter-spacing:0.12em;
   text-transform:uppercase;
-  position:relative;
-  z-index:1;
 }
 .divider::before, .divider::after{
   content:"";
@@ -233,32 +345,17 @@ p.in-view{ opacity:1; transform:translateY(0); }
 }
 
 /* ---------- comments / private message ---------- */
-.comments{
-  width:100%;
-  max-width:620px;
-  position:relative;
-  z-index:1;
-}
-
-.comments h2{
-  font-family:'Special Elite', cursive;
-  font-weight:normal;
-  font-size:1.1rem;
-  color: var(--ink);
-  margin-bottom:6px;
-}
-
 .comments .sub{
   font-size:0.9rem;
   color: var(--ink-dim);
-  margin-bottom:22px;
+  margin-bottom:20px;
 }
 
 .comment-form{
   display:flex;
   flex-direction:column;
   gap:12px;
-  background: var(--paper);
+  background: rgba(0,0,0,0.15);
   border:1px solid var(--line);
   border-radius:3px;
   padding:18px;
@@ -331,9 +428,155 @@ button.leave-msg:disabled{
   cursor:default;
 }
 
+/* ---------- chapter navigation ---------- */
+.chapter-nav{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:40px;
+  padding-top:24px;
+  border-top:1px solid var(--line);
+}
+
+.nav-btn{
+  background:transparent;
+  border:1px solid var(--line);
+  color: var(--ink-dim);
+  font-family:'IBM Plex Mono', monospace;
+  font-size:0.78rem;
+  letter-spacing:0.03em;
+  padding:10px 16px;
+  border-radius:2px;
+  cursor:pointer;
+  transition: border-color .25s ease, color .25s ease, opacity .2s ease, background .25s ease;
+}
+.nav-btn:hover{ border-color: var(--ink-dim); color: var(--ink); }
+.nav-btn.primary{
+  border-color: var(--ember);
+  color: var(--ember);
+}
+.nav-btn.primary:hover{
+  background: var(--ember);
+  color: #171207;
+}
+.nav-btn.hidden{
+  visibility:hidden;
+}
+
+/* ---------- the little paywall joke ---------- */
+.paywall-overlay{
+  position:fixed;
+  inset:0;
+  background: rgba(5,6,10,0.72);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:50;
+  opacity:0;
+  pointer-events:none;
+  transition: opacity .3s ease;
+  padding:20px;
+}
+.paywall-overlay.show{ opacity:1; pointer-events:all; }
+
+.paywall-box{
+  background: var(--paper);
+  border:1px solid var(--line);
+  border-radius:4px;
+  padding:30px 26px;
+  max-width:340px;
+  width:100%;
+  text-align:center;
+  box-shadow: 0 30px 60px -20px rgba(0,0,0,0.75);
+  animation: pop-in .3s ease;
+}
+@keyframes pop-in{
+  from{ opacity:0; transform: scale(0.94); }
+  to{   opacity:1; transform: scale(1); }
+}
+
+.paywall-text{
+  font-size:0.98rem;
+  color: var(--ink);
+  margin-bottom:16px;
+}
+.paywall-caption{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:0.68rem;
+  color: var(--ink-dim);
+  margin-top:8px;
+  letter-spacing:0.04em;
+}
+
+.loading-bar{
+  width:100%;
+  height:4px;
+  background: var(--line);
+  border-radius:2px;
+  overflow:hidden;
+}
+.loading-fill{
+  height:100%;
+  width:0%;
+  background: var(--ember);
+  border-radius:2px;
+}
+@keyframes loading-fill{ from{ width:0%; } to{ width:100%; } }
+
+.paywall-timer{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:2.2rem;
+  color: var(--ember);
+  font-variant-numeric: tabular-nums;
+  margin-top:6px;
+}
+
+.paywall-btn{
+  margin-top:6px;
+  background: transparent;
+  border:1px solid var(--ember);
+  color: var(--ember);
+  font-family:'IBM Plex Mono', monospace;
+  font-size:0.8rem;
+  letter-spacing:0.03em;
+  padding:10px 22px;
+  border-radius:2px;
+  cursor:pointer;
+  transition: background .25s ease, color .25s ease;
+}
+.paywall-btn:hover{ background: var(--ember); color:#171207; }
+
+.paywall-art{
+  max-width:130px;
+  display:block;
+  margin: 0 auto 10px;
+}
+
+.speech-bubble{
+  display:inline-block;
+  background: var(--line);
+  color: var(--ink);
+  font-size:0.85rem;
+  padding:8px 14px;
+  border-radius:14px;
+  margin-bottom:12px;
+  position:relative;
+}
+.paywall-content .speech-bubble::after{
+  content:"";
+  position:absolute;
+  bottom:-7px;
+  left:50%;
+  transform:translateX(-50%);
+  border-width:7px 7px 0 7px;
+  border-style:solid;
+  border-color: var(--line) transparent transparent transparent;
+}
+
 @media (max-width:600px){
-  .letter{ padding:40px 24px 36px; }
+  .book{ padding:20px 24px 26px; }
   .comment-form input[type="text"]{ max-width:100%; }
+  .views{ top:16px; right:18px; }
 }
 
 @media (prefers-reduced-motion: reduce){

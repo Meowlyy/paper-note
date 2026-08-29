@@ -1,6 +1,5 @@
 /* =========================================================
-   CONFIG — replace these two values before you deploy.
-   See README.md for step-by-step setup.
+   CONFIG — these two are already filled in for this project.
    ========================================================= */
 const COUNTAPI_KEY   = "pn-8x2k9q-2026";
 const FORMSPREE_ID   = "xnpqqjkd";
@@ -8,12 +7,10 @@ const FORMSPREE_ID   = "xnpqqjkd";
 
 const COUNTAPI_BASE = "https://countapi.mileshilliard.com/api/v1";
 
-// ---- real view counter ----
-// Shows a quiet pulsing dot while the request is in flight, then fades
-// straight to the real number — no count-up animation, so there's nothing
-// to look choppy regardless of connection speed.
+// ---- real view counter (only lives in Chapter One) ----
 (async function trackView(){
   const el = document.getElementById('viewCount');
+  if(!el) return;
   if(COUNTAPI_KEY.startsWith("REPLACE")){
     el.textContent = "–";
     return;
@@ -28,18 +25,6 @@ const COUNTAPI_BASE = "https://countapi.mileshilliard.com/api/v1";
   }
 })();
 
-// ---- reveal paragraphs on scroll ----
-const paras = document.querySelectorAll('.letter p');
-const io = new IntersectionObserver((entries)=>{
-  entries.forEach(e=>{
-    if(e.isIntersecting){
-      e.target.classList.add('in-view');
-      io.unobserve(e.target);
-    }
-  });
-}, { threshold: 0.2 });
-paras.forEach(p => io.observe(p));
-
 // ---- drifting dust motes ----
 const ambient = document.querySelector('.ambient');
 for(let i=0;i<14;i++){
@@ -51,6 +36,138 @@ for(let i=0;i<14;i++){
   m.style.animationDuration = (10 + Math.random()*8) + 's';
   ambient.appendChild(m);
 }
+
+// ---- chapter navigation ----
+const chapters = Array.from(document.querySelectorAll('.chapter'));
+const dots     = Array.from(document.querySelectorAll('.progress .dot'));
+const sideChars = Array.from(document.querySelectorAll('.side-char'));
+const prevBtn  = document.getElementById('prevBtn');
+const nextBtn  = document.getElementById('nextBtn');
+const sideArt  = document.getElementById('sideArt');
+const stage    = document.getElementById('chaptersStage');
+let current = 0;
+
+// pin the stage to Chapter One's real height on load, so the very
+// first transition has a correct starting point to animate from.
+stage.style.height = chapters[0].scrollHeight + 'px';
+
+function updateNav(){
+  prevBtn.classList.toggle('hidden', current === 0);
+  nextBtn.classList.toggle('hidden', current === chapters.length - 1);
+  dots.forEach((d,i)=> d.classList.toggle('current', i === current));
+  chapters.forEach((c,i)=>{
+    if(i === current){ c.removeAttribute('inert'); c.removeAttribute('aria-hidden'); }
+    else{ c.setAttribute('inert',''); c.setAttribute('aria-hidden','true'); }
+  });
+}
+
+function updateSideArt(){
+  const match = sideChars.find(c => parseInt(c.dataset.for, 10) === current);
+  sideChars.forEach(c => c.classList.toggle('active', c === match));
+  sideArt.classList.toggle('empty', !match);
+}
+
+const viewsBadge = document.getElementById('views');
+function updateViewsBadge(){
+  viewsBadge.classList.toggle('hidden', current !== 0);
+}
+
+function goTo(index){
+  if(index === current || index < 0 || index >= chapters.length) return;
+
+  // 1. pin the stage at its current height so there's a real starting
+  //    point for the height transition (can't animate from "auto").
+  stage.style.height = stage.getBoundingClientRect().height + 'px';
+
+  requestAnimationFrame(()=>{
+    // 2. crossfade: both happen together, no gap in between.
+    chapters[current].classList.remove('active');
+    chapters[index].classList.add('active');
+    current = index;
+    updateNav();
+    updateSideArt();
+    updateViewsBadge();
+    maybeTriggerPaywallJoke();
+
+    // 3. measure the new chapter's natural height now that it's in
+    //    flow, then animate the stage to it on the next frame.
+    requestAnimationFrame(()=>{
+      stage.style.height = chapters[index].scrollHeight + 'px';
+    });
+  });
+}
+
+// keep the stage sized correctly if the viewport changes (e.g. rotation)
+window.addEventListener('resize', ()=>{
+  stage.style.transition = 'none';
+  stage.style.height = chapters[current].scrollHeight + 'px';
+  requestAnimationFrame(()=>{ stage.style.transition = ''; });
+});
+
+prevBtn.addEventListener('click', ()=> goTo(current - 1));
+nextBtn.addEventListener('click', ()=> goTo(current + 1));
+dots.forEach(d => d.addEventListener('click', ()=> goTo(parseInt(d.dataset.target, 10))));
+
+document.addEventListener('keydown', (e)=>{
+  const tag = document.activeElement.tagName;
+  if(tag === 'TEXTAREA' || tag === 'INPUT') return; // don't hijack typing
+  if(e.key === 'ArrowRight') goTo(current + 1);
+  if(e.key === 'ArrowLeft')  goTo(current - 1);
+});
+
+updateNav();
+updateSideArt();
+updateViewsBadge();
+
+// ---- the little paywall joke (fires once, right as Chapter Two loads) ----
+let paywallShown = false;
+
+function maybeTriggerPaywallJoke(){
+  if(current !== 1 || paywallShown) return;
+  paywallShown = true;
+  // small fixed delay just so the chapter transition finishes first
+  setTimeout(()=>{
+    if(current === 1) openPaywall();
+  }, 600);
+}
+
+function showPaywallStep(n){
+  [1,2,3,4].forEach(i=>{
+    document.getElementById('paywallStep' + i).hidden = (i !== n);
+  });
+}
+
+function openPaywall(){
+  document.getElementById('paywallOverlay').classList.add('show');
+  showPaywallStep(1);
+
+  const fill = document.getElementById('loadingFill');
+  fill.style.animation = 'none';
+  void fill.offsetWidth; // force reflow so the animation restarts cleanly
+  fill.style.animation = 'loading-fill 7s linear forwards';
+
+  setTimeout(()=> showPaywallStep(2), 7000);
+}
+
+document.getElementById('paywallOkBtn').addEventListener('click', ()=>{
+  showPaywallStep(3);
+  let secondsLeft = 25;
+  const timerEl = document.getElementById('paywallTimer');
+  timerEl.textContent = secondsLeft;
+
+  const interval = setInterval(()=>{
+    secondsLeft--;
+    timerEl.textContent = secondsLeft;
+    if(secondsLeft <= 0){
+      clearInterval(interval);
+      showPaywallStep(4);
+    }
+  }, 1000);
+});
+
+document.getElementById('paywallCloseBtn').addEventListener('click', ()=>{
+  document.getElementById('paywallOverlay').classList.remove('show');
+});
 
 // ---- private message form (Formspree — goes to your inbox only) ----
 const form = document.getElementById('commentForm');
