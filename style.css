@@ -15,7 +15,11 @@
 
 *{ box-sizing:border-box; margin:0; padding:0; }
 
-html{ scroll-behavior:smooth; }
+html{
+  scroll-behavior:smooth;
+  scrollbar-gutter: stable;
+  overflow-y: scroll;
+}
 
 /* ---------- custom scrollbar (instead of the default browser one) ---------- */
 html{
@@ -118,6 +122,8 @@ body{
 }
 .side-char{
   grid-area: 1 / 1;
+  align-self: start;
+  justify-self: stretch;
   text-align:center;
   opacity:0;
   transform:translateY(10px);
@@ -131,7 +137,9 @@ body{
 .side-art.empty{ opacity:0; }
 .side-art{ transition: opacity .4s ease; }
 .side-char img{
+  width:100%;
   max-width:140px;
+  height:auto;
   display:block;
   margin:0 auto;
   filter: drop-shadow(0 14px 20px rgba(0,0,0,0.45));
@@ -554,7 +562,9 @@ button.leave-msg:disabled{
 .paywall-btn:hover{ background: var(--ember); color:#171207; }
 
 .paywall-art{
+  width:100%;
   max-width:130px;
+  height:auto;
   display:block;
   margin: 0 auto 10px;
 }
