@@ -14,6 +14,38 @@
     <div class="glow"></div>
   </div>
 
+  <!-- small gate — has to know a few things about me before it lets you in -->
+  <div class="gate-overlay" id="gateOverlay">
+    <div class="gate-box">
+      <div class="eyebrow">before you continue</div>
+      <p class="gate-intro">quick check — you should know these if you actually know me :)</p>
+
+      <div class="gate-question">
+        <label for="gateAge">how old am I?</label>
+        <input type="number" id="gateAge" inputmode="numeric" placeholder="age">
+      </div>
+
+      <div class="gate-question">
+        <label>am I big or small? :(</label>
+        <div class="gate-choices" data-q="size">
+          <button type="button" class="gate-choice" data-val="big">big</button>
+          <button type="button" class="gate-choice" data-val="small">small</button>
+        </div>
+      </div>
+
+      <div class="gate-question">
+        <label>am I always tired?</label>
+        <div class="gate-choices" data-q="tired">
+          <button type="button" class="gate-choice" data-val="yes">yes</button>
+          <button type="button" class="gate-choice" data-val="no">no</button>
+        </div>
+      </div>
+
+      <button class="gate-submit" id="gateSubmit">continue</button>
+      <p class="gate-status" id="gateStatus"></p>
+    </div>
+  </div>
+
   <div class="stage">
 
     <main class="book" id="book">
@@ -36,64 +68,35 @@
         <section class="chapter active" data-chapter="0">
           <div class="eyebrow">Chapter One — The Departure</div>
           <h1>I'll be gone for a while...</h1>
-
-          <p class="intro">hey, it's me :) in case you found this page and you're wondering why I'm gone, where I might be for a while, or you just want to know a bit more about my life and who I actually am deep inside — take your time, this is for you.</p>
-
-          <p>I don't know how long I'll be gone, but please don't hold back on texting me anyway :) it means a lot to me. I want to step away from Discord, Twitch, and social contact online for a while. it just hasn't been good for me lately, and I need this distance to clear my head and focus on my real life.</p>
+          <div class="chapter-body" data-body="0"></div>
         </section>
 
         <!-- Chapter 2 — The Real Struggle -->
         <section class="chapter" data-chapter="1">
           <div class="eyebrow">Chapter Two — The Real Struggle</div>
           <h1>Feeling alone, even when I'm not</h1>
-
-          <p>I've been feeling quite <span class="highlight">alone</span> lately, even though I know I'm not completely alone. the people close to me stand behind me, starting with my mom and family, and saying I have no one wouldn't be fair to them, or to anyone who's been there for me.</p>
-
-          <p>if you're reading this and you've supported me: you have a place in my heart. always. you're a part of me, and I appreciate it from the bottom of my heart, more than I can really put into words. thank you to all of you &lt;3 love y'all, and please take care.</p>
+          <div class="chapter-body" data-body="1"></div>
         </section>
 
-        <!-- Chapter 3 — What Panic Looks Like -->
+        <!-- Chapter 3 — Panic, and What Helps -->
         <section class="chapter" data-chapter="2">
-          <div class="eyebrow">Chapter Three — What Panic Looks Like</div>
-          <h1>What panic looks like</h1>
-
-          <p>at too much stress — even just a little, like when someone near me gets loud or mad, or there's an argument — I get anxious, super high pulse, and I shake a lot, and depending on the situation I can pass out. and I get panic attacks often, which isn't something to joke about :) like when I'm really really tired, in bed, trying to sleep, I often get panic attacks or I'm right on the edge of one.</p>
-
-          <p>social anxiety and so, etc etc, all my various traumas, etc. and you don't see most of it from outside until you push the person to a certain point, and then it's already too late... and no apology helps anymore at that point. when it hits, I stop perceiving anything around me, my pulse goes hollow, I get dizzy and everything goes blurry, and in situations like that, if I can, I position myself behind people who give me a bit of safety — that's been my brother in some situations over my mom, and in other situations the other way around, it's very dependent on the situation and the person. and it's less about a 100% safe space existing somewhere — we just don't spend that much time together as a family anymore, and it's not that open when it comes to talking about this stuff, or maybe I've just never really talked about it before.</p>
-
-          <p>and you really can't see from outside how bad a situation is for me in that moment — staring at the floor or whatever, not perceiving anything anymore, just wanting to get away, super high pulse and stress and dizziness, and sometimes forgetting to breathe for minutes. and no matter what, in all situations like that, you don't want someone talking at you for five minutes straight, even if it's meant nicely — that can actually make it worse, or make the person more upset. what you actually need is the comfy spot: a person who's there, gives you that comfy, feel-good space, stays close to you and looks out for you, sitting right next to you, close... like, really close.. and just a hug — but more a hug pulling you in and holding on, so you can snuggle into it.</p>
-
-          <p>and you can calm down, even if it's only a little, and if it's possible, take the person out of the situation without asking and without pushing. like once, on vacation with my mom — we were waiting for the others, standing by a street, and there were just a lot of people around, across from us and walking past, and I felt super uncomfortable. and we just walked a bit further away, looked at something, walked around a little, away from everyone. it's these small things that mean a lot to me, even if the person doesn't realize it anymore afterward.</p>
-
-          <p>and separately from that — at the smallest thing, something you do or say, even if it's subconscious, it can make me not want to come stand behind you, or rely on you like that, in situations like that again, because the safe space got broken, and it doesn't feel comfortable anymore. and forcing it just makes everything worse. at least one good thing though: when the person feels comfortable and trusts you, they can get really clingy and cuddly for that safe space, in pretty much any situation.</p>
-
-          <p>and you just have to see naturally, over time, how and what and where — it can be the smallest things. like with me, I don't like it when people walk behind me — I'd rather be the one walking behind them, even if it's only by a little, like 10cm or a meter. depending how comfortable I feel with the person, walking really close side by side is fine too, but there's always at least a little bit of me being behind. same thing with biking, generally just don't like it when someone's behind me.</p>
-
-          <p>and separately, with sitting or sleeping — I always sit on the right, so left has to be my safe space, the other way around doesn't feel right. and I think it connects to being right-handed — left is my weaker hand, and it just needs protection there, so that's not the side that should be open, whether it's sleeping, sitting, whatever.</p>
-
-          <p>but that doesn't mean I expect someone to do everything — no, I just need help, a little nudge, softer at night, but intensive help, soft, not direct, more interactive than instructive. and sometimes in stress situations my head just goes blank, and I forget stuff, like turning off the bathroom light, or other things, because my head just doesn't cooperate — and that can be really uncomfortable for me depending on the situation. what helps is just the comfy safe space again, not punishing the person for it with annoyed thoughts or anger or bad looks — that's the fastest way to lose that safe space for a long time, or for good. and be rewarded for the smallest things, even if they seem tiny or insignificant from outside — for the person, that might've taken a lot of energy and strength they probably didn't even have.</p>
+          <div class="eyebrow">Chapter Three — Panic, and What Helps</div>
+          <h1>When it gets too much</h1>
+          <div class="chapter-body" data-body="2"></div>
         </section>
 
         <!-- Chapter 4 — Scars, Pain & Not Giving Up -->
         <section class="chapter" data-chapter="3">
           <div class="eyebrow">Chapter Four — Scars, Pain & Not Giving Up</div>
           <h1>Still standing</h1>
-
-          <p>I also want to talk about moving forward. dwelling too much on the past isn't good — you need a clear view ahead, no matter how much it hurts or how many scars you carry.</p>
-
-          <p>despite everything I've been through, all the bad experiences and the traumas I still carry, I won't give up. I'll keep trying my best, no matter how much it hurts, and even if I cry at some point because of the pain inside me, I'll try to hold onto my smile and stay the good-hearted person I truly am.</p>
+          <div class="chapter-body" data-body="3"></div>
         </section>
 
         <!-- Chapter 5 — Final Words -->
         <section class="chapter" data-chapter="4">
           <div class="eyebrow">Chapter Five — Final Words</div>
           <h1>A place in my heart</h1>
-
-          <p>I may still go through hard times, but I'll try not to <span class="highlight">regret</span> the decisions I make.</p>
-
-          <p>just remember this: I won't forget you. there will always be a part of me where all of you have a safe place to stay.</p>
-
-          <div class="close-mark">· · ·</div>
+          <div class="chapter-body" data-body="4"></div>
 
           <div class="divider">Leave something for me</div>
 
@@ -165,6 +168,7 @@
     </div>
   </div>
 
+<script src="chapter-content.js"></script>
 <script src="script.js"></script>
 </body>
 </html>

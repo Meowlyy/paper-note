@@ -3,29 +3,12 @@
    ========================================================= */
 const COUNTAPI_KEY   = "pn-8x2k9q-2026";
 const FORMSPREE_ID   = "xnpqqjkd";
+const BIRTHDATE      = { year: 2007, month: 7, day: 18 }; // month is 1-indexed here
 /* ========================================================= */
 
 const COUNTAPI_BASE = "https://countapi.mileshilliard.com/api/v1";
 
-// ---- real view counter (only lives in Chapter One) ----
-(async function trackView(){
-  const el = document.getElementById('viewCount');
-  if(!el) return;
-  if(COUNTAPI_KEY.startsWith("REPLACE")){
-    el.textContent = "–";
-    return;
-  }
-  try{
-    const res = await fetch(`${COUNTAPI_BASE}/hit/${COUNTAPI_KEY}`);
-    const data = await res.json();
-    el.textContent = data.value.toLocaleString('en-US');
-    el.classList.add('loaded');
-  }catch(err){
-    el.textContent = "–";
-  }
-})();
-
-// ---- drifting dust motes ----
+// ---- drifting dust motes (purely decorative, fine to show before the gate) ----
 const ambient = document.querySelector('.ambient');
 for(let i=0;i<7;i++){
   const m = document.createElement('div');
@@ -37,6 +20,96 @@ for(let i=0;i<7;i++){
   ambient.appendChild(m);
 }
 
+// ---- entry gate ----
+function calcCurrentAge(){
+  const now = new Date();
+  let age = now.getFullYear() - BIRTHDATE.year;
+  const hadBirthdayThisYear =
+    (now.getMonth() + 1 > BIRTHDATE.month) ||
+    (now.getMonth() + 1 === BIRTHDATE.month && now.getDate() >= BIRTHDATE.day);
+  if(!hadBirthdayThisYear) age--;
+  return age;
+}
+
+function b64ToUtf8(b64){
+  const binary = atob(b64);
+  const bytes = new Uint8Array(binary.length);
+  for(let i=0;i<binary.length;i++) bytes[i] = binary.charCodeAt(i);
+  return new TextDecoder('utf-8').decode(bytes);
+}
+
+const gateOverlay = document.getElementById('gateOverlay');
+const gateStatus  = document.getElementById('gateStatus');
+let gateSize  = null;
+let gateTired = null;
+
+document.querySelectorAll('.gate-choices').forEach(group => {
+  const q = group.dataset.q;
+  group.querySelectorAll('.gate-choice').forEach(btn => {
+    btn.addEventListener('click', ()=>{
+      group.querySelectorAll('.gate-choice').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      if(q === 'size') gateSize = btn.dataset.val;
+      if(q === 'tired') gateTired = btn.dataset.val;
+    });
+  });
+});
+
+document.getElementById('gateSubmit').addEventListener('click', ()=>{
+  const ageInput = parseInt(document.getElementById('gateAge').value, 10);
+  const correct = (ageInput === calcCurrentAge()) && (gateSize === 'small') && (gateTired === 'yes');
+
+  if(!correct){
+    gateStatus.textContent = "hmm, not quite — try again?";
+    gateStatus.className = "gate-status";
+    return;
+  }
+
+  gateStatus.textContent = "yep, that's me :)";
+  gateStatus.className = "gate-status ok";
+
+  setTimeout(()=>{
+    gateOverlay.classList.add('passed');
+    revealLetter();
+  }, 500);
+});
+
+// ---- everything below only happens once the gate is passed ----
+function revealLetter(){
+
+  // decode each chapter's real content and drop it into its placeholder
+  document.querySelectorAll('.chapter-body').forEach(el => {
+    const i = parseInt(el.dataset.body, 10);
+    if(CHAPTER_CONTENT_B64[i] !== undefined){
+      el.innerHTML = b64ToUtf8(CHAPTER_CONTENT_B64[i]);
+    }
+  });
+
+  // real view counter (only lives in Chapter One)
+  (async function trackView(){
+    const el = document.getElementById('viewCount');
+    if(!el) return;
+    if(COUNTAPI_KEY.startsWith("REPLACE")){
+      el.textContent = "–";
+      return;
+    }
+    try{
+      const res = await fetch(`${COUNTAPI_BASE}/hit/${COUNTAPI_KEY}`);
+      const data = await res.json();
+      el.textContent = data.value.toLocaleString('en-US');
+      el.classList.add('loaded');
+    }catch(err){
+      el.textContent = "–";
+    }
+  })();
+
+  // now that Chapter One actually has content, size the stage to it
+  stage.style.height = chapters[0].scrollHeight + 'px';
+  updateNav();
+  updateSideArt();
+  updateViewsBadge();
+}
+
 // ---- chapter navigation ----
 const chapters = Array.from(document.querySelectorAll('.chapter'));
 const dots     = Array.from(document.querySelectorAll('.progress .dot'));
@@ -46,10 +119,6 @@ const nextBtn  = document.getElementById('nextBtn');
 const sideArt  = document.getElementById('sideArt');
 const stage    = document.getElementById('chaptersStage');
 let current = 0;
-
-// pin the stage to Chapter One's real height on load, so the very
-// first transition has a correct starting point to animate from.
-stage.style.height = chapters[0].scrollHeight + 'px';
 
 function updateNav(){
   prevBtn.classList.toggle('hidden', current === 0);
@@ -97,8 +166,13 @@ function goTo(index){
   });
 }
 
-// keep the stage sized correctly if the viewport changes (e.g. rotation)
+// keep the stage sized correctly if the viewport changes (e.g. rotation) —
+// but ignore trivial/spurious resize events (like a scrollbar toggling)
+// so it never fires from just clicking or selecting text.
+let lastKnownWidth = window.innerWidth;
 window.addEventListener('resize', ()=>{
+  if(Math.abs(window.innerWidth - lastKnownWidth) < 5) return;
+  lastKnownWidth = window.innerWidth;
   stage.style.transition = 'none';
   stage.style.height = chapters[current].scrollHeight + 'px';
   requestAnimationFrame(()=>{ stage.style.transition = ''; });
@@ -114,10 +188,6 @@ document.addEventListener('keydown', (e)=>{
   if(e.key === 'ArrowRight') goTo(current + 1);
   if(e.key === 'ArrowLeft')  goTo(current - 1);
 });
-
-updateNav();
-updateSideArt();
-updateViewsBadge();
 
 // ---- the little paywall joke (fires once, right as Chapter Two loads) ----
 let paywallShown = false;
@@ -212,3 +282,7 @@ form.addEventListener('submit', async function(e){
     submitBtn.disabled = false;
   }
 });
+
+// small deterrent against casual right-click -> inspect. doesn't stop
+// anyone determined (F12 still works), just discourages the casual case.
+document.addEventListener('contextmenu', (e) => e.preventDefault());

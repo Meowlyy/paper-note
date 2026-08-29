@@ -101,6 +101,110 @@ body{
   100% { opacity:0; transform:translateY(-380px) translateX(40px); }
 }
 
+/* ---------- the entry gate ---------- */
+.gate-overlay{
+  position:fixed;
+  inset:0;
+  background: var(--bg);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:100;
+  padding:20px;
+  transition: opacity .5s ease;
+}
+.gate-overlay.passed{
+  opacity:0;
+  pointer-events:none;
+}
+
+.gate-box{
+  background: linear-gradient(180deg, var(--paper), var(--paper-edge));
+  border:1px solid var(--line);
+  border-radius:4px;
+  padding:36px 32px;
+  max-width:360px;
+  width:100%;
+  box-shadow: 0 30px 60px -20px rgba(0,0,0,0.75);
+}
+
+.gate-intro{
+  color: var(--ink-dim);
+  font-size:0.92rem;
+  margin: 4px 0 26px;
+}
+
+.gate-question{
+  margin-bottom:22px;
+}
+.gate-question label{
+  display:block;
+  font-family:'IBM Plex Mono', monospace;
+  font-size:0.78rem;
+  color: var(--ink);
+  margin-bottom:10px;
+}
+
+.gate-question input{
+  width:100%;
+  background: rgba(0,0,0,0.2);
+  border:1px solid var(--line);
+  color: var(--ink);
+  font-family:'Literata', serif;
+  font-size:1rem;
+  padding:10px 12px;
+  border-radius:2px;
+}
+.gate-question input:focus{ outline:none; border-color: var(--focus); }
+
+.gate-choices{
+  display:flex;
+  gap:10px;
+}
+.gate-choice{
+  flex:1;
+  background: rgba(0,0,0,0.2);
+  border:1px solid var(--line);
+  color: var(--ink-dim);
+  font-family:'IBM Plex Mono', monospace;
+  font-size:0.82rem;
+  padding:10px;
+  border-radius:2px;
+  cursor:pointer;
+  transition: border-color .2s ease, color .2s ease, background .2s ease;
+}
+.gate-choice:hover{ border-color: var(--ink-dim); color: var(--ink); }
+.gate-choice.selected{
+  border-color: var(--ember);
+  color: var(--ember);
+  background: rgba(217,160,95,0.08);
+}
+
+.gate-submit{
+  width:100%;
+  background: transparent;
+  border:1px solid var(--ember);
+  color: var(--ember);
+  font-family:'IBM Plex Mono', monospace;
+  font-size:0.85rem;
+  letter-spacing:0.04em;
+  padding:12px;
+  border-radius:2px;
+  cursor:pointer;
+  transition: background .25s ease, color .25s ease;
+}
+.gate-submit:hover{ background: var(--ember); color:#171207; }
+
+.gate-status{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:0.78rem;
+  color: var(--error);
+  text-align:center;
+  min-height:1.2em;
+  margin-top:14px;
+}
+.gate-status.ok{ color: var(--ember); }
+
 /* ---------- stage: side art + book side by side ---------- */
 .stage{
   position:relative;
