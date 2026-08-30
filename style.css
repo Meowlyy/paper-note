@@ -50,7 +50,7 @@ body{
   font-weight:300;
   line-height:1.85;
   min-height:100vh;
-  padding: 8vh 20px 10vh;
+  padding: calc(8vh + 68px) 20px 10vh;
   display:flex;
   flex-direction:column;
   align-items:center;
@@ -101,16 +101,40 @@ body{
   100% { opacity:0; transform:translateY(-380px) translateX(40px); }
 }
 
+/* ---------- site header / branding ---------- */
+.site-header{
+  position:fixed;
+  top:0; left:0; right:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  padding:34px 20px 22px;
+  z-index:150;
+  pointer-events:none;
+  background: linear-gradient(180deg, rgba(10,12,18,0.9) 0%, rgba(10,12,18,0.5) 75%, transparent 100%);
+}
+.site-logo{ color: var(--ember); flex-shrink:0; opacity:0.95; }
+.site-name{
+  font-family:'Special Elite', cursive;
+  font-size:1.3rem;
+  letter-spacing:0.02em;
+  color: var(--ember);
+  text-shadow: 0 0 18px rgba(217,160,95,0.16);
+}
+
 /* ---------- the entry gate ---------- */
 .gate-overlay{
   position:fixed;
   inset:0;
-  background: var(--bg);
+  background:
+    radial-gradient(ellipse 700px 500px at 50% 15%, var(--ember-soft), transparent 60%),
+    var(--bg);
   display:flex;
   align-items:center;
   justify-content:center;
   z-index:100;
-  padding:20px;
+  padding:130px 20px 30px;
   transition: opacity .5s ease;
 }
 .gate-overlay.passed{
@@ -126,6 +150,7 @@ body{
   max-width:360px;
   width:100%;
   box-shadow: 0 30px 60px -20px rgba(0,0,0,0.75);
+  animation: rise .8s cubic-bezier(.2,.7,.3,1) both;
 }
 
 .gate-intro{
