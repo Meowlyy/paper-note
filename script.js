@@ -141,34 +141,54 @@ function updateViewsBadge(){
   viewsBadge.classList.toggle('hidden', current !== 0);
 }
 
+// a gentler, hand-timed smooth-scroll — the native one feels too quick
+// over long distances, especially on the longer chapters. resolves once
+// it's actually done, so the chapter swap can wait for it.
+function smoothScrollToTop(){
+  const startY = window.scrollY;
+  if(startY < 4) return Promise.resolve();
+  const duration = Math.min(750, Math.max(400, startY * 0.6));
+  const start = performance.now();
+
+  return new Promise(resolve=>{
+    function step(now){
+      const t = Math.min(1, (now - start) / duration);
+      const eased = t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2; // ease-in-out cubic
+      window.scrollTo(0, startY * (1 - eased));
+      if(t < 1) requestAnimationFrame(step);
+      else resolve();
+    }
+    requestAnimationFrame(step);
+  });
+}
+
 function goTo(index){
   if(index === current || index < 0 || index >= chapters.length) return;
 
-  // if we're scrolled down, ease back to the top first so the new
-  // chapter's heading is actually visible, instead of just snapping —
-  // that's what looked jarring before.
-  if(window.scrollY > 4){
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
+  // if we're scrolled down, ease back to the top first — and only swap
+  // the chapter content once we've actually arrived, so it doesn't look
+  // like the page is changing out from under you mid-scroll.
+  smoothScrollToTop().then(()=>{
 
-  // 1. pin the stage at its current height so there's a real starting
-  //    point for the height transition (can't animate from "auto").
-  stage.style.height = stage.getBoundingClientRect().height + 'px';
+    // 1. pin the stage at its current height so there's a real starting
+    //    point for the height transition (can't animate from "auto").
+    stage.style.height = stage.getBoundingClientRect().height + 'px';
 
-  requestAnimationFrame(()=>{
-    // 2. crossfade: both happen together, no gap in between.
-    chapters[current].classList.remove('active');
-    chapters[index].classList.add('active');
-    current = index;
-    updateNav();
-    updateSideArt();
-    updateViewsBadge();
-    maybeTriggerPaywallJoke();
-
-    // 3. measure the new chapter's natural height now that it's in
-    //    flow, then animate the stage to it on the next frame.
     requestAnimationFrame(()=>{
-      stage.style.height = chapters[index].scrollHeight + 'px';
+      // 2. crossfade: both happen together, no gap in between.
+      chapters[current].classList.remove('active');
+      chapters[index].classList.add('active');
+      current = index;
+      updateNav();
+      updateSideArt();
+      updateViewsBadge();
+      maybeTriggerPaywallJoke();
+
+      // 3. measure the new chapter's natural height now that it's in
+      //    flow, then animate the stage to it on the next frame.
+      requestAnimationFrame(()=>{
+        stage.style.height = chapters[index].scrollHeight + 'px';
+      });
     });
   });
 }
