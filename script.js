@@ -144,6 +144,13 @@ function updateViewsBadge(){
 function goTo(index){
   if(index === current || index < 0 || index >= chapters.length) return;
 
+  // if we're scrolled down, ease back to the top first so the new
+  // chapter's heading is actually visible, instead of just snapping —
+  // that's what looked jarring before.
+  if(window.scrollY > 4){
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
   // 1. pin the stage at its current height so there's a real starting
   //    point for the height transition (can't animate from "auto").
   stage.style.height = stage.getBoundingClientRect().height + 'px';
