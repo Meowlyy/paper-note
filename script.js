@@ -68,12 +68,13 @@ document.getElementById('gateSubmit').addEventListener('click', ()=>{
   gateStatus.textContent = "yep, that's me :)";
   gateStatus.className = "gate-status ok";
 
+  // this click is the real user gesture — audio has to start right here,
+  // synchronously, or browsers will silently refuse to let it play later.
+  if(typeof LetterMusic !== 'undefined') LetterMusic.start();
+
   setTimeout(()=>{
     gateOverlay.classList.add('passed');
     revealLetter();
-    // the click just now is a real user gesture, which browsers require
-    // before any audio is allowed to play — good moment to start it.
-    if(typeof LetterMusic !== 'undefined') LetterMusic.start();
   }, 500);
 });
 
@@ -301,3 +302,13 @@ const siteHeader = document.querySelector('.site-header');
 window.addEventListener('scroll', ()=>{
   siteHeader.classList.toggle('faded', window.scrollY > 40);
 }, { passive: true });
+
+// safety net: some browsers are stricter than others about which click
+// counts as "real" user activation for audio. LetterMusic.start() is
+// idempotent (does nothing once already running), so it's safe to just
+// keep trying on any click/keypress until it actually takes.
+function ensureMusicStarted(){
+  if(typeof LetterMusic !== 'undefined') LetterMusic.start();
+}
+document.addEventListener('click', ensureMusicStarted);
+document.addEventListener('keydown', ensureMusicStarted);
