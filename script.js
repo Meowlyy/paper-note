@@ -71,6 +71,9 @@ document.getElementById('gateSubmit').addEventListener('click', ()=>{
   setTimeout(()=>{
     gateOverlay.classList.add('passed');
     revealLetter();
+    // the click just now is a real user gesture, which browsers require
+    // before any audio is allowed to play — good moment to start it.
+    if(typeof LetterMusic !== 'undefined') LetterMusic.start();
   }, 500);
 });
 
@@ -162,6 +165,7 @@ function goTo(index){
     updateSideArt();
     updateViewsBadge();
     maybeTriggerPaywallJoke();
+    if(typeof LetterMusic !== 'undefined') LetterMusic.onChapterChange(current);
 
     // 3. measure the new chapter's natural height now that it's in
     //    flow, then animate the stage to it on the next frame.
