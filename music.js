@@ -110,9 +110,11 @@ const LetterMusic = (function(){
   async function playTrack(index){
     if(!started) return; // stopped in the meantime
     const url = PLAYLIST[index];
+    console.log('[LetterMusic] loading track', index, url);
     let midi;
     try{
       midi = await loadMidi(url);
+      console.log('[LetterMusic] loaded midi ok, tracks:', midi.tracks.length, 'total notes:', midi.tracks.reduce((n,t)=>n+t.notes.length,0));
     }catch(e){
       console.warn(
         `[LetterMusic] couldn't load "${url}". If you're testing via a file:// URL, ` +
@@ -128,13 +130,16 @@ const LetterMusic = (function(){
 
     const startAt = Tone.now() + 0.3;
     let trackEnd = 0;
+    let scheduled = 0;
     midi.tracks.forEach(track => {
       track.notes.forEach(note => {
         sampler.triggerAttackRelease(note.name, note.duration, startAt + note.time, note.velocity);
+        scheduled++;
         const end = note.time + note.duration;
         if(end > trackEnd) trackEnd = end;
       });
     });
+    console.log('[LetterMusic] scheduled', scheduled, 'notes, track length', trackEnd.toFixed(1), 's, gain value:', masterGain.gain.value, 'muted:', muted);
 
     playIndex = index;
     clearTimeout(nextTrackTimer);
@@ -145,14 +150,19 @@ const LetterMusic = (function(){
 
   async function start(){
     init();
-    if(started || typeof Tone === 'undefined' || typeof Midi === 'undefined') return;
+    if(started){ console.log('[LetterMusic] already started, skipping'); return; }
+    if(typeof Tone === 'undefined'){ console.warn('[LetterMusic] Tone.js not loaded'); return; }
+    if(typeof Midi === 'undefined'){ console.warn('[LetterMusic] @tonejs/midi not loaded'); return; }
     started = true;
+    console.log('[LetterMusic] starting… audio context state before:', Tone.context.state);
     try{
       await Tone.start();
+      console.log('[LetterMusic] Tone.start() resolved, context state now:', Tone.context.state);
       applyVolume();
       playTrack(0);
     }catch(e){
-      started = false; // audio blocked / offline — fail quietly
+      console.error('[LetterMusic] failed to start:', e);
+      started = false; // audio blocked / offline
     }
   }
 
