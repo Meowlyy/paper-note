@@ -58,7 +58,17 @@
 
   <div class="stage">
 
-    <div class="side-spacer" aria-hidden="true"></div>
+    <aside class="music-box" id="musicBox" aria-label="background music">
+      <div class="music-eyebrow">the sound of it</div>
+      <div class="music-note-glyph" id="musicGlyph">♪</div>
+      <div class="music-slider-wrap">
+        <input type="range" id="musicVolume" class="music-volume" min="0" max="100" value="35" step="1" aria-label="music volume">
+      </div>
+      <button type="button" class="music-toggle" id="musicToggle" aria-label="mute music" aria-pressed="false">
+        <svg class="icon-sound" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg>
+        <svg class="icon-muted" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" hidden><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M15.5 9l5 6M20.5 9l-5 6"/></svg>
+      </button>
+    </aside>
 
     <main class="book" id="book">
 
@@ -185,7 +195,10 @@
     </div>
   </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tonejs/[email protected]/build/Midi.js"></script>
 <script src="chapter-content.js"></script>
+<script src="music.js"></script>
 <script src="script.js"></script>
 </body>
 </html>
