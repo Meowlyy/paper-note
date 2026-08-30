@@ -286,3 +286,9 @@ form.addEventListener('submit', async function(e){
 // small deterrent against casual right-click -> inspect. doesn't stop
 // anyone determined (F12 still works), just discourages the casual case.
 document.addEventListener('contextmenu', (e) => e.preventDefault());
+
+// fade the header out softly on scroll, back in near the top
+const siteHeader = document.querySelector('.site-header');
+window.addEventListener('scroll', ()=>{
+  siteHeader.classList.toggle('faded', window.scrollY > 40);
+}, { passive: true });

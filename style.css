@@ -113,6 +113,10 @@ body{
   z-index:150;
   pointer-events:none;
   background: linear-gradient(180deg, rgba(10,12,18,0.9) 0%, rgba(10,12,18,0.5) 75%, transparent 100%);
+  transition: opacity .4s ease;
+}
+.site-header.faded{
+  opacity:0;
 }
 .site-logo{ color: var(--ember); flex-shrink:0; opacity:0.95; }
 .site-name{
@@ -249,6 +253,14 @@ body{
   flex-shrink:0;
   display:grid;
 }
+.side-spacer{
+  width:150px;
+  flex-shrink:0;
+}
+@media (max-width:900px){
+  .side-art{ display:none; }
+  .side-spacer{ display:none; }
+}
 .side-char{
   grid-area: 1 / 1;
   align-self: start;
@@ -290,6 +302,7 @@ body{
 
 @media (max-width:900px){
   .side-art{ display:none; }
+  .side-spacer{ display:none; }
 }
 
 /* ---------- the book (card that holds all chapters) ---------- */
@@ -570,6 +583,16 @@ button.leave-msg:hover{
 button.leave-msg:disabled{
   opacity:0.5;
   cursor:default;
+}
+
+/* ---------- date the chapter was written ---------- */
+.written-date{
+  margin-top:32px;
+  font-family:'IBM Plex Mono', monospace;
+  font-size:0.7rem;
+  letter-spacing:0.04em;
+  color: var(--ink-dim);
+  opacity:0.7;
 }
 
 /* ---------- chapter navigation ---------- */
