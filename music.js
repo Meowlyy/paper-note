@@ -158,6 +158,9 @@ const LetterMusic = (function(){
     try{
       await Tone.start();
       console.log('[LetterMusic] Tone.start() resolved, context state now:', Tone.context.state);
+      console.log('[LetterMusic] waiting for piano samples to finish loading…');
+      await Tone.loaded();
+      console.log('[LetterMusic] piano samples loaded, scheduling first track');
       applyVolume();
       playTrack(0);
     }catch(e){
