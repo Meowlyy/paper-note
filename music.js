@@ -29,7 +29,7 @@ const LetterMusic = (function(){
     masterGain.gain.rampTo(target * 0.9, 0.3);
   }
 
-  function init(){
+  async function init(){
     if(ready || typeof Tone === 'undefined') return;
     ready = true;
 
@@ -52,6 +52,10 @@ const LetterMusic = (function(){
     });
 
     sampler.chain(filter, reverb, masterGain);
+
+    console.log('[LetterMusic] waiting for reverb impulse response…');
+    await reverb.ready;
+    console.log('[LetterMusic] reverb ready');
 
     try{
       const savedVol = localStorage.getItem('letterMusicVolume');
@@ -149,15 +153,14 @@ const LetterMusic = (function(){
   }
 
   async function start(){
-    init();
     if(started){ console.log('[LetterMusic] already started, skipping'); return; }
     if(typeof Tone === 'undefined'){ console.warn('[LetterMusic] Tone.js not loaded'); return; }
     if(typeof Midi === 'undefined'){ console.warn('[LetterMusic] @tonejs/midi not loaded'); return; }
     started = true;
-    console.log('[LetterMusic] starting… audio context state before:', Tone.context.state);
     try{
       await Tone.start();
       console.log('[LetterMusic] Tone.start() resolved, context state now:', Tone.context.state);
+      await init();
       console.log('[LetterMusic] waiting for piano samples to finish loading…');
       await Tone.loaded();
       console.log('[LetterMusic] piano samples loaded, scheduling first track');
